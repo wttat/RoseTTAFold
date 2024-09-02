@@ -93,23 +93,6 @@ echo " template search duration: ${TEMPLATE_DURATION} sec"
 TOTAL_DATA_PREP_DURATION=$[ $(date +%s) - ${START} ]
 echo "total data prep duration: ${TOTAL_DATA_PREP_DURATION} sec"
 
-
-############################################################
-# 4. predict distances and orientations
-############################################################
-if [ ! -s $WDIR/t000_.3track.npz ]
-then
-    echo "Predicting distance and orientations"
-    python $PIPEDIR/network/predict_pyRosetta.py \
-        -m $PIPEDIR/weights \
-        -i $WDIR/t000_.msa0.a3m \
-        -o $WDIR/t000_.3track \
-        --hhr $WDIR/t000_.hhr \
-        --atab $WDIR/t000_.atab \
-        --db $DB
-fi
-
-
 ############################################################
 # End-to-end prediction
 ############################################################
@@ -120,7 +103,7 @@ then
     DB="$DBDIR/pdb100_2021Mar03/pdb100_2021Mar03"
 
     python $SCRIPTDIR/network/predict_e2e.py \
-        -m $MODEL_WEIGHTS_DIR/weights \
+        -m $DATA_DIR/weights \
         -i $WDIR/t000_.msa0.a3m \
         -o $WDIR/t000_.e2e \
         --hhr $WDIR/t000_.hhr \
@@ -128,9 +111,6 @@ then
         --db $DB
 fi
 
-aws s3 cp $WDIR/t000_.e2e.pdb $OUTPUT_S3_FOLDER/$UUID.e2e.pdb
-aws s3 cp $WDIR/t000_.e2e_init.pdb $OUTPUT_S3_FOLDER/$UUID.e2e_init.pdb
-aws s3 cp $WDIR/t000_.e2e.npz $OUTPUT_S3_FOLDER/$UUID.e2e.npz
 
 TOTAL_PREDICT_DURATION=$[ $(date +%s) - ${PREDICT_START} ]
 echo " prediction duration: ${TOTAL_PREDICT_DURATION} sec"
