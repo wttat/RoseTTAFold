@@ -12,6 +12,9 @@ unset __conda_setup
 # <<< conda initialize <<<
 ############################################################
 
+echo "file_id: $file_id"
+echo "INPUT_S3_URI: $INPUT_S3_URI"
+echo "OUTPUT_S3_URI: $OUTPUT_S3_URI"
 
 SCRIPT=`realpath -s $0`
 SCRIPTDIR=`dirname $SCRIPT`
@@ -25,6 +28,8 @@ DATA_DIR="/fsx/dataset"
 CPU=$[$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.CPU')/1024]
 MEM=$[$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.MEM')/1024]
 
+echo "CPU: $CPU"
+echo "MEM: $MEM"
 # Inputs:
 
 IN=$WDIR/input.fa     # input.fasta
