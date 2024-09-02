@@ -12,6 +12,8 @@ unset __conda_setup
 # <<< conda initialize <<<
 ############################################################
 
+echo "all paramaters: $@"
+
 echo "file_id: $file_id"
 echo "INPUT_S3_URI: $INPUT_S3_URI"
 echo "OUTPUT_S3_URI: $OUTPUT_S3_URI"
