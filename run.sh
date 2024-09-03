@@ -27,8 +27,26 @@ DATA_DIR="/fsx/dataset"
 # MEM="64" # max memory (in GB)
 
 # replace CPU/MEM to get batch env
-CPU=$[$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.CPU')/1024]
-MEM=$[$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.MEM')/1024]
+if [ -z "$ECS_CONTAINER_METADATA_URI" ]; then
+    CPU=8
+    MEM=60
+else
+    CPU_LIMIT=$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.CPU')
+    MEM_LIMIT=$(curl -s $ECS_CONTAINER_METADATA_URI | jq '.Limits.MEM')
+    if [ -z "$CPU_LIMIT" ]; then
+        CPU=8
+    else
+        CPU=$((CPU_LIMIT/1024))
+    fi
+
+    if [ -z "$MEM_LIMIT" ]; then
+        MEM=60
+    else
+        MEM=$((MEM_LIMIT/1024))
+    fi
+fi
+
+
 
 echo "CPU: $CPU"
 echo "MEM: $MEM"
